@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mesdb
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+  backend:
+    build: ./backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - '8000:8000'
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/mesdb
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - '3000:3000'
+    depends_on:
+      - backend
+volumes:
+  db-data:
